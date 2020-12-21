@@ -41,7 +41,7 @@ const fuusorApiClient = new FuusorApiClient({
 ### fuusorApiClient.createDataSet: Create dataset instance
 
 ```javascript
-const dataSet = await fuusorApiClient.createDataSet(dataSetOptions);
+const dataSet = fuusorApiClient.createDataSet(dataSetOptions);
 ```
 
 Used to create new dataset instance for updating data in Fuusor database.
@@ -122,7 +122,7 @@ dataSet.defineDimensionField('costcenter', 'Cost center', [
   { id: 'SK124', name: 'Sales' }
 ]);
 
-// Define date field
+// Define date field 
 dataSet.defineDateField('project_date', 'Project date');
 
 // Define value field
@@ -132,4 +132,72 @@ dataSet.defineValueField('hours', 'Project hours');
 dataSet.defineDescriptionField('work_description', 'Project work description');
 ```
 
-### dataSet.defineField: Define dataset fields
+### dataSet.addRow(s): Add data rows to dataset
+
+```javascript
+// Add one row
+dataSet.addRow(data);
+
+// Add multiple rows
+dataSet.addRows(data[]);
+```
+
+Add rows to dataset. Each row property field must be defined with *dataSet.defineField*
+
+**Examples**
+
+```javascript
+dataSet.addRow({
+  project_date : '2020-12-01',
+  work_description : 'My great project',
+  hours : 10,
+  costcenter: 'SK123'
+});
+```
+
+### dataSet.save: Save dataset to Fuusor via API
+
+```javascript
+await dataSet.save();
+```
+
+Saves dataset to Fuusor. Returns promise.
+
+### Full dataset example (JS)
+
+```javascript
+import { FuusorApiClient } from 'fuusor-api-client';
+
+const fuusorApiClient = new FuusorApiClient({
+  clientId: 'api-client-id-from-fuusor',
+  clientSecret: 'api-client-secret-from-fuusor',
+  username: 'environment-username-from-fuusor',
+  password: 'environment-password-from-fuusor',
+}
+
+const dataSet = fuusorApiClient.createDataSet({
+  groupId: 'abc1234-1234-abcd-abcd-abcdabcdabcd',
+  datasetName: 'Invoices',
+  datasetId: 'invoices',
+  datasetType: 'invoices',
+
+  begin: '2020-01-01',
+  end: '2020-01-31',
+  primarydate: 'invoice_date',
+});
+
+dataSet.defineDateField('invoice_date', 'Invoice date');
+dataSet.defineValueField('total', 'Invoice total');
+dataSet.defineDescriptionField('customer', 'Customer name');
+dataSet.defineDimensionField('costcenter', 'Branch', [
+  { id: 'branch1', name: 'Branch 1' },
+  { id: 'branch2', name: 'Branch 2' }
+]);
+
+dataSet.addRows([
+  { invoice_date: '2020-01-05', total: 150.00, customer: 'Example Ltd', costcenter: 'branch1' },
+  { invoice_date: '2020-01-06', total: 120.24, customer: 'Fuusor Ltd', costcenter: 'branch2' }
+]);
+
+await dataSet.save();
+```
