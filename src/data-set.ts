@@ -253,10 +253,14 @@ export class FuusorDataSet {
         if (row.hasOwnProperty(property)) {
           const value = row[property];
 
-          if (valueFields.includes(property) && typeof value !== 'number' && value !== null) {
-            throw new Error(`Value field expecting number value. Incorrect row value for ${property}: ${value}`);
-          } else if (dateFields.includes(property) && !value?.toString().match(/^\d{4}-\d{2}-\d{2}$/)) {
-            throw new Error(`Date field expecting YYYY-MM-DD formatted value. Incorrect row value for ${property}: ${value}`);
+          if (valueFields.includes(property)) {
+            if (typeof value !== 'number' && value !== null) {
+              throw new Error(`Value field expecting number value. Incorrect row value for ${property}: ${value}`);
+            }
+          } else if (dateFields.includes(property)) {
+            if (!value?.toString().match(/^\d{4}-\d{2}-\d{2}$/)) {
+              throw new Error(`Date field expecting YYYY-MM-DD formatted value. Incorrect row value for ${property}: ${value}`);
+            }
           } else if (typeof value !== 'string' && value !== null) {
             throw new Error(`Expecting string value. Incorrect row value for ${property}: ${value}`);
           }
