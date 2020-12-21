@@ -1,0 +1,32 @@
+{
+  "name": "fuusor-api-client",
+  "version": "0.0.1",
+  "description": "Fuusor API client library",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tonitakala/fuusor-api-client.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tonitakala/fuusor-api-client/issues"
+  },
+  "homepage": "https://github.com/tonitakala/fuusor-api-client#readme",
+  "dependencies": {
+    "@types/node": "^14.0.13",
+    "form-data": "^3.0.0",
+    "got": "^11.3.0"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "devDependencies": {
+    "typescript": "^4.1.2"
+  }
+}
