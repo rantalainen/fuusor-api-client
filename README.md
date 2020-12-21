@@ -1,6 +1,8 @@
 # Fuusor API Client
 Third party Fuusor API client. Fuusor website: https://www.fuusor.fi/
 
+:warning: This tool is in early stages and is subject to change. 
+
 ## Installation
 
 Install from npm:
