@@ -134,6 +134,23 @@ dataSet.defineValueField('hours', 'Project hours');
 dataSet.defineDescriptionField('work_description', 'Project work description');
 ```
 
+### dataSet.pushDimensionFieldDimension: Add dimension item to dimension field
+
+```javascript
+dataSet.pushDimensionFieldDimension(dimensionId, item);
+```
+
+Add dimension items to earlier defined dimension field by dimension id.
+
+**Examples**
+
+```javascript
+dataSet.pushDimensionFieldDimension('costcenter', {
+  id: 'SK125', 
+  name: 'Accounting'
+});
+```
+
 ### dataSet.addRow(s): Add data rows to dataset
 
 ```javascript

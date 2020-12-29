@@ -1,6 +1,6 @@
 {
   "name": "fuusor-api-client",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Fuusor API client library",
   "main": "dist/index.js",
   "scripts": {

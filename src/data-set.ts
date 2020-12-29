@@ -13,7 +13,7 @@ export interface IFuusorDataSetOptions {
 }
 
 export interface IFuusorDimensionFieldItem {
-  id: string;
+  id: string | number;
   name: string;
 }
 
@@ -186,6 +186,31 @@ export class FuusorDataSet {
 
   defineDimensionField(id: string, name: string, items: IFuusorDimensionFieldItem[]) {
     this.datasetData.dimensionFields.push({ id, name, items });
+  }
+
+  /**
+   * Add dimension to predefined dimension field
+   * @param id Dimension field identifier
+   * @param item Dimension field item with `id` and `name` 
+   */
+
+  pushDimensionFieldDimension(dimensionId: string, item: IFuusorDimensionFieldItem) {
+    if ( ! item.id || ! item.name) {
+      throw new Error(`Missing required properties for dimension item (id and name)`);
+    }
+    
+    for (const dimension of this.datasetData.dimensionFields) {
+      if (dimension.id === dimensionId) {
+        dimension.items.push({
+          id : item.id,
+          name : item.name
+        });
+        
+        return;
+      }
+    }
+
+    throw new Error(`Unknown dimension id: ${dimensionId}`);
   }
 
   /**
