@@ -196,7 +196,7 @@ export class FuusorDataSet {
 
   pushDimensionFieldDimension(dimensionId: string, item: IFuusorDimensionFieldItem) {
     if ( ! item.id || ! item.name) {
-      throw new Error(`Missing required properties for dimension item (id and name)`);
+      throw new Error(`Missing required properties for dimension item (id: ${item.id}, name: ${item.name})`);
     }
     
     for (const dimension of this.datasetData.dimensionFields) {
@@ -280,14 +280,14 @@ export class FuusorDataSet {
 
           if (valueFields.includes(property)) {
             if (typeof value !== 'number' && value !== null) {
-              throw new Error(`Value field expecting number value or null. Incorrect row value for ${property}: ${value}`);
+              throw new Error(`Value field expecting number or null. Incorrect row value for ${property}: ${value}`);
             }
           } else if (dateFields.includes(property)) {
             if (value !== null && !value?.toString().match(/^\d{4}-\d{2}-\d{2}$/)) {
               throw new Error(`Date field expecting YYYY-MM-DD formatted value or null. Incorrect row value for ${property}: ${value}`);
             }
-          } else if (typeof value !== 'string' && value !== null) {
-            throw new Error(`Expecting string value or null. Incorrect row value for ${property}: ${value}`);
+          } else if (typeof value !== 'string' && typeof value !== 'number' && value !== null) {
+            throw new Error(`Expecting string, number or null. Incorrect row value for ${property}: ${value}`);
           }
         }
       }
