@@ -298,3 +298,7 @@ dataSet.addRows([
     
 await dataSet.save();
 ```
+
+## Changelog
+
+0.1.0 Add support for dimension hierarchies

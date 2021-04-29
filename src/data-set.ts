@@ -206,7 +206,6 @@ export class FuusorDataSet {
     this.datasetData.dimensionFields.push({ id, name, items });
   }
 
-
   /**
    * Define dimension hierarchy
    * 
@@ -215,14 +214,14 @@ export class FuusorDataSet {
    * @param dimensionId dimension id, should be reference to added dimension field
    */
 
-  defineDimensionHierarchy(id: string, name: string, dimensionId: string, items: IFuusorDimensionHierarchyItem[] = []) {
+  defineDimensionHierarchy(id: string, name: string, dimensionId: string) {
     for (const dimension of this.datasetData.dimensionFields) {
       if (dimension.id === dimensionId) {
         this.datasetData.dimensionHierarchies.push({
           id,
           name,
           dimensionid : dimensionId,
-          items
+          items: []
         });
 
         return;
@@ -232,9 +231,9 @@ export class FuusorDataSet {
     throw new Error(`Unknown dimension id: ${dimensionId}`);
   }
 
-  pushDimensionHierarchyItem(dimensionId: string, item: IFuusorDimensionHierarchyItem) {
+  pushDimensionHierarchyItem(hierarchyId: string, item: IFuusorDimensionHierarchyItem) {
     for (const hierarchy of this.datasetData.dimensionHierarchies) {
-      if (hierarchy.dimensionid === dimensionId) {
+      if (hierarchy.id === hierarchyId) {
         if ( ! item.id || ! item.name) {
           throw new Error(`Missing required properties for dimension hierarchy item (id: ${item.id}, name: ${item.name})`);
         }
@@ -245,7 +244,7 @@ export class FuusorDataSet {
       }
     }
 
-    throw new Error(`Unknown dimension id: ${dimensionId}`);
+    throw new Error(`Unknown hierarchy id: ${hierarchyId}`);
   }
 
   /**
