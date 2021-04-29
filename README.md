@@ -151,6 +151,62 @@ dataSet.pushDimensionFieldDimension('costcenter', {
 });
 ```
 
+### dataSet.defineDimensionHierarchy: Define dataset dimension hierarchies
+
+```javascript
+dataSet.defineDimensionHierarchy(id, name, dimensionId, items?);
+```
+
+This method is used to define dataset dimension hierarchies. When defining dimension hierarchy, the referenced dimension id must exist in dataset.
+
+Definition properties are as listed below:
+
+* `id` Dimension hierarchy id
+* `name` Dimension hierarchy name
+* `dimensionId` Referenced dimension id
+
+**Examples**
+
+```javascript
+// Define dimension hierarchy, 'customer' must be defined as dimension
+dataSet.defineDimensionHierarchy('customer_category', 'Customer category', 'customer');
+```
+
+### dataSet.pushDimensionHierarchyItem: Add items to defined hierarchy
+
+```javascript
+dataSet.pushDimensionHierarchyItem(hierarchyId, hierarchyItem);
+```
+
+This method is used to define dataset dimension hierarchy items. When defining hierarchy items, the referenced dimension hierarchy id must exist in dataset.
+
+Definition properties are as listed below:
+
+* `hierarchyId` Hierarchy item id
+* `hierarchyItem` Hierarchy item (see examples)
+
+**Examples**
+
+```javascript
+// Defined customer_category hierarchy in previous example
+dataSet.defineDimensionHierarchy('customer_category', 'Customer category', 'customer');
+
+// Add items to hierarchy
+
+dataSet.pushDimensionHierarchyItem('customer_category', {
+  id: 333, // actual category id
+  name: 'Production customers', // actual category name
+  items: [111, 222, 333] // actual customer ids in this category
+});
+
+dataSet.pushDimensionHierarchyItem('customer_category', {
+  id: 444,
+  name: 'Prospects',
+  items: [777, 888]
+});
+
+```
+
 ### dataSet.addRow(s): Add data rows to dataset
 
 ```javascript
@@ -207,16 +263,38 @@ const dataSet = fuusorApiClient.createDataSet({
 
 dataSet.defineDateField('invoice_date', 'Invoice date');
 dataSet.defineValueField('total', 'Invoice total');
-dataSet.defineDescriptionField('customer', 'Customer name');
+
+dataSet.defineDimensionField('customer', 'Customer name');
+dataSet.pushDimensionFieldDimension('customer', { id: 1, name: 'Customer 1 Oy' });
+dataSet.pushDimensionFieldDimension('customer', { id: 2, name: 'Customer 2 Oy' });
+
 dataSet.defineDimensionField('costcenter', 'Branch', [
   { id: 'branch1', name: 'Branch 1' },
   { id: 'branch2', name: 'Branch 2' }
 ]);
 
-dataSet.addRows([
-  { invoice_date: '2020-01-05', total: 150.00, customer: 'Example Ltd', costcenter: 'branch1' },
-  { invoice_date: '2020-01-06', total: 120.24, customer: 'Fuusor Ltd', costcenter: 'branch2' }
-]);
+dataSet.defineDimensionHierarchy('customer_category', 'Customer category', 'customer');
 
+dataSet.pushDimensionHierarchyItem('customer_category', {
+  id: 5,
+  name: 'Category 5',
+  items: [1]
+});
+
+dataSet.pushDimensionHierarchyItem('customer_category', {
+  id: 6,
+  name: 'Category 6',
+  items: [2]
+});
+
+dataSet.pushDimensionFieldDimension('costcenter', {
+  id: 'branch3', name: 'Branch 3'
+});
+
+dataSet.addRows([
+  { invoice_date: '2020-01-05', total: 150.00, customer: 1, costcenter: 'branch1', category_id: 5 },
+  { invoice_date: '2020-01-06', total: 120.24, customer: 2, costcenter: 'branch2', category_id: 6 }
+]);
+    
 await dataSet.save();
 ```
