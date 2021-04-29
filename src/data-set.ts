@@ -23,6 +23,22 @@ export interface IFuusorDimensionField {
   items: IFuusorDimensionFieldItem[];
 }
 
+export interface IFuusorDimensionHierarchy {
+  dimensionid: string;
+  id: string;
+  name: string;
+  items: IFuusorDimensionHierarchyItem[];
+}
+
+export interface IFuusorDimensionHierarchyItem {
+  id: string;
+  name: string;
+  items?: IFuusorDimensionHierarchyItemItems;
+  children?: IFuusorDimensionHierarchyItem[];
+}
+
+export type IFuusorDimensionHierarchyItemItems = string[] | number[];
+
 export interface IFuusorDateField {
   id: string;
   name: string;
@@ -48,6 +64,7 @@ export interface IFuusorDataSetData {
   valueFields: IFuusorValueField[];
   descriptionFields: IFuusorDescriptionField[];
   rows: IFuusorDataSetRow[];
+  dimensionHierarchies: IFuusorDimensionHierarchy[];
 
   // Allow optional fields for future functionality
   [propName: string]: any;
@@ -68,7 +85,8 @@ export class FuusorDataSet {
     dateFields: [],
     descriptionFields: [],
     valueFields: [],
-    rows: []
+    rows: [],
+    dimensionHierarchies: []
   };
 
   constructor(fuusorApiClient: FuusorApiClient, datasetOptions: IFuusorDataSetOptions) {
@@ -184,8 +202,50 @@ export class FuusorDataSet {
    * Defines dimension field
    */
 
-  defineDimensionField(id: string, name: string, items: IFuusorDimensionFieldItem[]) {
+  defineDimensionField(id: string, name: string, items: IFuusorDimensionFieldItem[] = []) {
     this.datasetData.dimensionFields.push({ id, name, items });
+  }
+
+
+  /**
+   * Define dimension hierarchy
+   * 
+   * @param id hierachy id
+   * @param name hierarchy name
+   * @param dimensionId dimension id, should be reference to added dimension field
+   */
+
+  defineDimensionHierarchy(id: string, name: string, dimensionId: string, items: IFuusorDimensionHierarchyItem[] = []) {
+    for (const dimension of this.datasetData.dimensionFields) {
+      if (dimension.id === dimensionId) {
+        this.datasetData.dimensionHierarchies.push({
+          id,
+          name,
+          dimensionid : dimensionId,
+          items
+        });
+
+        return;
+      }
+    }
+
+    throw new Error(`Unknown dimension id: ${dimensionId}`);
+  }
+
+  pushDimensionHierarchyItem(dimensionId: string, item: IFuusorDimensionHierarchyItem) {
+    for (const hierarchy of this.datasetData.dimensionHierarchies) {
+      if (hierarchy.dimensionid === dimensionId) {
+        if ( ! item.id || ! item.name) {
+          throw new Error(`Missing required properties for dimension hierarchy item (id: ${item.id}, name: ${item.name})`);
+        }
+            
+        hierarchy.items.push(item);
+
+        return;
+      }
+    }
+
+    throw new Error(`Unknown dimension id: ${dimensionId}`);
   }
 
   /**
