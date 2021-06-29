@@ -302,3 +302,4 @@ await dataSet.save();
 ## Changelog
 
 0.1.0 Add support for dimension hierarchies
+0.1.1 Add backwards compatible support for dataset endpoint (instead of fileupload)

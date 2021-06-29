@@ -10,6 +10,7 @@ export interface IFuusorApiClientOptions {
   
   uriConnect?: string;
   uriUploadFile?: string;
+  uriDataset?: string;
 }
 
 export class FuusorApiClient {
@@ -19,6 +20,7 @@ export class FuusorApiClient {
     // Set default connect URI
     options.uriConnect = options.uriConnect || 'https://api.fuusor.fi/connect/token';
     options.uriUploadFile = options.uriUploadFile || 'https://api.fuusor.fi/api/v1/uploadfile';
+    options.uriDataset = options.uriDataset || 'https://api.fuusor.fi/api/v1/dataset';
 
     if ( ! options.clientId) {
       throw new Error('Missing options.clientId');
@@ -72,14 +74,13 @@ export class FuusorApiClient {
   }
 
   async saveDataSet(accessToken: string, data: any) : Promise<void> {
-    const body = JSON.stringify(this._minimizeObjectKeys(data));
+    const json = this._minimizeObjectKeys(data);
 
-    await got.post(this.options.uriUploadFile || '', {
-      body,
+    await got.post(this.options.uriDataset || '', {
+      json,
 
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/octet-stream'
+        'Authorization': `Bearer ${accessToken}`
       }
     });
 
