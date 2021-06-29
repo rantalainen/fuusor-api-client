@@ -10,6 +10,7 @@ export interface IFuusorDataSetOptions {
   end?: string;
   primaryDate?: string;
   periods?: IFuusorDataSetPeriod[];
+  updateById?: string;
 }
 
 export interface IFuusorDimensionFieldItem {
@@ -130,6 +131,10 @@ export class FuusorDataSet {
 
     if ( ! datasetOptions.primaryDate && datasetOptions.begin) {
       throw new Error('Missing datasetOptions.primaryDate (required when begin and end is set)');
+    }
+
+    if ( datasetOptions.primaryDate && datasetOptions.updateById) {
+      throw new Error(`Cannot use primaryDate and updateByIdField at the same time`);
     }
 
     this.datasetOptions = datasetOptions;
@@ -332,6 +337,17 @@ export class FuusorDataSet {
     const valueFields = this.datasetData.valueFields.map((field: IFuusorValueField) => field.id);
     const dateFields = this.datasetData.dateFields.map((field: IFuusorDateField) => field.id);
 
+    // If updateByIdField is defined
+    if (this.datasetOptions.updateById) {
+
+      // If updateByIdField is not included in dimensionFields
+      const dimensionFieldNames = this.datasetData.dimensionFields.map((field) => field.id);
+      if ( ! dimensionFieldNames.includes(this.datasetOptions.updateById)) {
+        throw new Error(`dataset.dimensionFields does not contain updateById defined field`);
+      }
+
+    }
+
     for (const row of this.datasetData.rows) {
       for (const property in row) {
         if (row.hasOwnProperty(property)) {
@@ -348,6 +364,10 @@ export class FuusorDataSet {
           } else if (typeof value !== 'string' && typeof value !== 'number' && value !== null) {
             throw new Error(`Expecting string, number or null. Incorrect row value for ${property}: ${value}`);
           }
+        }
+
+        if ( this.datasetOptions.updateById && !row[this.datasetOptions.updateById]) {
+          throw new Error(`Missing updateById field for row`);
         }
       }
     }

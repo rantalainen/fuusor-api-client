@@ -60,6 +60,7 @@ Used to create new dataset instance for updating data in Fuusor database.
 * `begin` and `end` With large datasets you can only update data on certain timeframe between begin and end
 * `primarydate` When updating dataset based on date, use primarydate to define which property contains primary date in data
 * `periods` Array of periods (financial year term selections, defaults to calendar year)
+* `updateById` If only certain rows should be updated, define the field name that contains unique id
 
 ```javascript
 const dataSet = await fuusorApiClient.createDataSet({
@@ -80,7 +81,9 @@ const dataSet = await fuusorApiClient.createDataSet({
       begin: '2020-01-01',
       end: '2020-12-31'
     }
-  ]
+  ],
+
+  updateById: 'customer'
 });
 ```
 
@@ -256,9 +259,13 @@ const dataSet = fuusorApiClient.createDataSet({
   datasetId: 'invoices',
   datasetType: 'invoices',
 
+  // define begin, end and primarydate or updatebyid field
   begin: '2020-01-01',
   end: '2020-01-31',
   primarydate: 'invoice_date',
+
+  // if we want to update only certain rows, we must define updateById field
+  updateById: 'customer'
 });
 
 dataSet.defineDateField('invoice_date', 'Invoice date');
