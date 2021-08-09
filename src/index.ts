@@ -11,6 +11,9 @@ export interface IFuusorApiClientOptions {
   uriConnect?: string;
   uriUploadFile?: string;
   uriDataset?: string;
+
+  /** Request timeout, defaults to 120000 (120 secs) */
+  timeout?: number;
 }
 
 export class FuusorApiClient {
@@ -21,6 +24,9 @@ export class FuusorApiClient {
     options.uriConnect = options.uriConnect || 'https://api.fuusor.fi/connect/token';
     options.uriUploadFile = options.uriUploadFile || 'https://api.fuusor.fi/api/v1/uploadfile';
     options.uriDataset = options.uriDataset || 'https://api.fuusor.fi/api/v1/dataset';
+
+    // Set default timeout
+    options.timeout = options.timeout || 120000;
 
     if ( ! options.clientId) {
       throw new Error('Missing options.clientId');
@@ -78,6 +84,8 @@ export class FuusorApiClient {
 
     await got.post(this.options.uriDataset || '', {
       json,
+
+      timeout: this.options.timeout,
 
       headers: {
         'Authorization': `Bearer ${accessToken}`

@@ -35,7 +35,19 @@ const fuusorApiClient = new FuusorApiClient({
   clientSecret: 'api-client-secret-from-fuusor',
   username: 'environment-username-from-fuusor',
   password: 'environment-password-from-fuusor',
+
+  // Optional: change timeout
+  timeout: 60000
 }
+```
+
+### Changing timeout on the fly
+
+Default timeout implemented in 1.0.0 is 120 seconds for Fuusor API requests. You can change it in initialization or before saving dataset:
+
+```javascript
+// Change timeout on the fly:
+fuusorApiClient.options.timeout = 60000;
 ```
 
 ## Datasets
@@ -310,3 +322,4 @@ await dataSet.save();
 
 0.1.0 Add support for dimension hierarchies
 0.1.1 Add backwards compatible support for dataset endpoint (instead of fileupload)
+1.0.0 Add timeout option
