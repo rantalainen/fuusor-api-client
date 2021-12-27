@@ -1,7 +1,8 @@
 # Fuusor API Client
+
 Third party Fuusor API client. Fuusor website: https://www.fuusor.fi/
 
-:warning: This tool is in early stages and is subject to change. 
+:warning: This tool is in early stages and is subject to change.
 
 ## Installation
 
@@ -62,17 +63,17 @@ Used to create new dataset instance for updating data in Fuusor database.
 
 **required**:
 
-* `groupId` Company specific identifier from Company Management
-* `datasetName` Dataset name shown in Company Management
-* `datasetId` Dataset identifier shown in Company Management (use same id to update old dataset)
-* `datasetType` Short type identifier, for example: invoices or offers
+- `groupId` Company specific identifier from Company Management
+- `datasetName` Dataset name shown in Company Management
+- `datasetId` Dataset identifier shown in Company Management (use same id to update old dataset)
+- `datasetType` Short type identifier, for example: invoices or offers
 
 **optional**:
 
-* `begin` and `end` With large datasets you can only update data on certain timeframe between begin and end
-* `primarydate` When updating dataset based on date, use primarydate to define which property contains primary date in data
-* `periods` Array of periods (financial year term selections, defaults to calendar year)
-* `updateById` If only certain rows should be updated, define the field name that contains unique id
+- `begin` and `end` With large datasets you can only update data on certain timeframe between begin and end
+- `primarydate` When updating dataset based on date, use primarydate to define which property contains primary date in data
+- `periods` Array of periods (financial year term selections, defaults to calendar year)
+- `updateById` If only certain rows should be updated, define the field name that contains unique id
 
 ```javascript
 const dataSet = await fuusorApiClient.createDataSet({
@@ -85,7 +86,7 @@ const dataSet = await fuusorApiClient.createDataSet({
   end: '2020-12-31',
   primarydate: 'invoice_date',
   periods: [
-    { 
+    {
       begin: '2019-01-01',
       end: '2019-12-31'
     },
@@ -118,15 +119,15 @@ Each dataset is dynamically constructed, so you have to define data type for eac
 
 At the moment of writing, Fuusor has 4 different data types that are listed below:
 
-* `dimension` Dataset dimensions used to filter data
-* `date` Dataset date fields
-* `value` Numeric value fields (for example hours, euros etc.)
-* `description` Textual description fields for data row
+- `dimension` Dataset dimensions used to filter data
+- `date` Dataset date fields
+- `value` Numeric value fields (for example hours, euros etc.)
+- `description` Textual description fields for data row
 
 Definition properties are as listed below:
 
-* `id` Field property name in row objects
-* `name` Field display name in Fuusor
+- `id` Field property name in row objects
+- `name` Field display name in Fuusor
 
 For dimension field you will also define `items` (that are shown in filtering). Please see example.
 
@@ -139,7 +140,7 @@ dataSet.defineDimensionField('costcenter', 'Cost center', [
   { id: 'SK124', name: 'Sales' }
 ]);
 
-// Define date field 
+// Define date field
 dataSet.defineDateField('project_date', 'Project date');
 
 // Define value field
@@ -161,7 +162,7 @@ Add dimension items to earlier defined dimension field by dimension id.
 
 ```javascript
 dataSet.pushDimensionFieldDimension('costcenter', {
-  id: 'SK125', 
+  id: 'SK125',
   name: 'Accounting'
 });
 ```
@@ -176,9 +177,9 @@ This method is used to define dataset dimension hierarchies. When defining dimen
 
 Definition properties are as listed below:
 
-* `id` Dimension hierarchy id
-* `name` Dimension hierarchy name
-* `dimensionId` Referenced dimension id
+- `id` Dimension hierarchy id
+- `name` Dimension hierarchy name
+- `dimensionId` Referenced dimension id
 
 **Examples**
 
@@ -197,8 +198,8 @@ This method is used to define dataset dimension hierarchy items. When defining h
 
 Definition properties are as listed below:
 
-* `hierarchyId` Hierarchy item id
-* `hierarchyItem` Hierarchy item (see examples)
+- `hierarchyId` Hierarchy item id
+- `hierarchyItem` Hierarchy item (see examples)
 
 **Examples**
 
@@ -219,7 +220,6 @@ dataSet.pushDimensionHierarchyItem('customer_category', {
   name: 'Prospects',
   items: [777, 888]
 });
-
 ```
 
 ### dataSet.addRow(s): Add data rows to dataset
@@ -232,15 +232,15 @@ dataSet.addRow(data);
 dataSet.addRows(data[]);
 ```
 
-Add rows to dataset. Each row property field must be defined with *dataSet.defineField*
+Add rows to dataset. Each row property field must be defined with _dataSet.defineField_
 
 **Examples**
 
 ```javascript
 dataSet.addRow({
-  project_date : '2020-12-01',
-  work_description : 'My great project',
-  hours : 10,
+  project_date: '2020-12-01',
+  work_description: 'My great project',
+  hours: 10,
   costcenter: 'SK123'
 });
 ```
@@ -314,7 +314,7 @@ dataSet.addRows([
   { invoice_date: '2020-01-05', total: 150.00, customer: 1, costcenter: 'branch1', category_id: 5 },
   { invoice_date: '2020-01-06', total: 120.24, customer: 2, costcenter: 'branch2', category_id: 6 }
 ]);
-    
+
 await dataSet.save();
 ```
 
@@ -323,3 +323,4 @@ await dataSet.save();
 0.1.0 Add support for dimension hierarchies
 0.1.1 Add backwards compatible support for dataset endpoint (instead of fileupload)
 1.0.0 Add timeout option
+1.0.1 Scope @rantalainen/fuusor-api-client

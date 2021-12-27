@@ -1,6 +1,6 @@
 {
-  "name": "fuusor-api-client",
-  "version": "1.0.0",
+  "name": "@rantalainen/fuusor-api-client",
+  "version": "1.0.1",
   "description": "Fuusor API client library",
   "main": "dist/index.js",
   "scripts": {
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tonitakala/fuusor-api-client.git"
+    "url": "git+https://github.com/rantalainen/fuusor-api-client.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/tonitakala/fuusor-api-client/issues"
+    "url": "https://github.com/rantalainen/fuusor-api-client/issues"
   },
-  "homepage": "https://github.com/tonitakala/fuusor-api-client#readme",
+  "homepage": "https://github.com/rantalainen/fuusor-api-client#readme",
   "dependencies": {
     "@types/node": "^14.0.13",
     "form-data": "^3.0.0",
@@ -28,5 +28,8 @@
   ],
   "devDependencies": {
     "typescript": "^4.1.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
