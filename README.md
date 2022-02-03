@@ -9,7 +9,7 @@ Third party Fuusor API client. Fuusor website: https://www.fuusor.fi/
 Install from npm:
 
 ```
-npm install fuusor-api-client
+npm install @rantalainen/fuusor-api-client
 ```
 
 ## Setup
@@ -17,13 +17,13 @@ npm install fuusor-api-client
 ### Import to NodeJS project
 
 ```javascript
-const FuusorApiClient = require('fuusor-api-client').FuusorApiClient;
+const { FuusorApiClient } = require('@rantalainen/fuusor-api-client');
 ```
 
 ### Import to TypeScript project
 
 ```javascript
-import { FuusorApiClient } from 'fuusor-api-client';
+import { FuusorApiClient } from '@rantalainen/fuusor-api-client';
 ```
 
 ### Setup client with options
@@ -318,9 +318,114 @@ dataSet.addRows([
 await dataSet.save();
 ```
 
+## Users
+
+### fuusorApiClient.users.getAll()
+
+Gets all user accounts.
+
+```javascript
+const users = await fuusorApiClient.users.getAll();
+```
+
+Example response
+
+```
+[
+  {
+    userName: 'user@example.com',
+    authenticationType: null,
+    language: 'fi-FI'
+  }
+]
+```
+
+### fuusorApiClient.users.create(user)
+
+Creates a new user account.
+
+**required**:
+
+- `user.userName` Email used for login
+
+**optional**:
+
+- `user.authenticationType` Authentication type. Valid values: `microsoft`, `google`. Default is `microsoft`.
+- `user.language` Default UI language for user. Valid values: `fi-FI`, `en-US`. Default is `fi-FI`.
+
+```javascript
+await fuusorApiClient.users.create({
+  userName: 'user@example.com',
+  authenticationType: 'microsoft',
+  language: 'fi-FI'
+});
+```
+
+### fuusorApiClient.users.delete(userName)
+
+Deletes user account.
+
+**required**:
+
+- `userName` Email used for login
+
+```javascript
+await fuusorApiClient.users.delete('user@example.com');
+```
+
+## User groups
+
+### fuusorApiClient.userGroups.getAll()
+
+Gets all user groups.
+
+```javascript
+const groups = await fuusorApiClient.userGroups.getAll();
+```
+
+Example response
+
+```
+[
+  {
+    id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+    name: 'Example group',
+    description: 'Example description',
+    users: ['user@example.com']
+  }
+]
+```
+
+### fuusorApiClient.userGroups.addUsers(id, users)
+
+Adds users to the user group.
+
+**required**:
+
+- `id` User group id
+- `users` Array of user emails
+
+```javascript
+await fuusorApiClient.userGroups.addUsers('3fa85f64-5717-4562-b3fc-2c963f66afa6', ['user@example.com']);
+```
+
+### fuusorApiClient.userGroups.removeUsers(id, users)
+
+Removes users from the user group.
+
+**required**:
+
+- `id` User group id
+- `users` Array of user emails
+
+```javascript
+await fuusorApiClient.userGroups.removeUsers('3fa85f64-5717-4562-b3fc-2c963f66afa6', ['user@example.com']);
+```
+
 ## Changelog
 
-0.1.0 Add support for dimension hierarchies
-0.1.1 Add backwards compatible support for dataset endpoint (instead of fileupload)
-1.0.0 Add timeout option
-1.0.1 Scope @rantalainen/fuusor-api-client
+- 0.1.0 Add support for dimension hierarchies
+- 0.1.1 Add backwards compatible support for dataset endpoint (instead of fileupload)
+- 1.0.0 Add timeout option
+- 1.0.1 Scope @rantalainen/fuusor-api-client
+- 1.1.0 Add support for User and User Group API endpoints

@@ -1,11 +1,11 @@
-import { FuusorApiClient } from ".";
+import { FuusorApiClient } from '.';
 
 export interface IFuusorDataSetOptions {
   groupId: string;
   datasetId: string;
   datasetName: string;
   datasetType: string;
-  
+
   begin?: string;
   end?: string;
   primaryDate?: string;
@@ -91,49 +91,49 @@ export class FuusorDataSet {
   };
 
   constructor(fuusorApiClient: FuusorApiClient, datasetOptions: IFuusorDataSetOptions) {
-    if ( ! fuusorApiClient) {
+    if (!fuusorApiClient) {
       throw new Error('Missing fuusorApiClient');
     }
 
-    if ( ! datasetOptions.groupId) {
+    if (!datasetOptions.groupId) {
       throw new Error('Missing datasetOptions.groupId');
     }
 
-    if ( ! datasetOptions.datasetId) {
+    if (!datasetOptions.datasetId) {
       throw new Error('Missing datasetOptions.datasetId');
     }
 
-    if ( ! datasetOptions.datasetName) {
+    if (!datasetOptions.datasetName) {
       throw new Error('Missing datasetOptions.datasetName');
     }
 
-    if ( ! datasetOptions.datasetType) {
+    if (!datasetOptions.datasetType) {
       throw new Error('Missing datasetOptions.datasetType');
     }
 
-    if ( ! datasetOptions.end && datasetOptions.begin) {
+    if (!datasetOptions.end && datasetOptions.begin) {
       throw new Error('Missing datasetOptions.end although datasetOptions.begin is set');
     }
 
-    if ( ! datasetOptions.begin && datasetOptions.end) {
+    if (!datasetOptions.begin && datasetOptions.end) {
       throw new Error('Missing datasetOptions.begin although datasetOptions.end is set');
     }
 
     if (datasetOptions.begin && datasetOptions.end) {
-      if ( ! datasetOptions.begin?.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      if (!datasetOptions.begin?.match(/^\d{4}-\d{2}-\d{2}$/)) {
         throw new Error('Incorrect datasetOptions.begin format, use YYYY-MM-DD');
       }
-  
-      if ( ! datasetOptions.end?.match(/^\d{4}-\d{2}-\d{2}$/)) {
+
+      if (!datasetOptions.end?.match(/^\d{4}-\d{2}-\d{2}$/)) {
         throw new Error('Incorrect datasetOptions.end format, use YYYY-MM-DD');
-      }  
+      }
     }
 
-    if ( ! datasetOptions.primaryDate && datasetOptions.begin) {
+    if (!datasetOptions.primaryDate && datasetOptions.begin) {
       throw new Error('Missing datasetOptions.primaryDate (required when begin and end is set)');
     }
 
-    if ( datasetOptions.primaryDate && datasetOptions.updateById) {
+    if (datasetOptions.primaryDate && datasetOptions.updateById) {
       throw new Error(`Cannot use primaryDate and updateByIdField at the same time`);
     }
 
@@ -141,7 +141,7 @@ export class FuusorDataSet {
     this.fuusorApiClient = fuusorApiClient;
 
     // Set (optional) periods if defined in options
-    if ( datasetOptions.periods) {
+    if (datasetOptions.periods) {
       this.setPeriods(datasetOptions.periods);
     }
   }
@@ -155,22 +155,22 @@ export class FuusorDataSet {
    * @param periods Array of `begin` and `end` dates in YYYY-MM-DD format
    */
 
-  setPeriods(periods: Array<IFuusorDataSetPeriod>) : FuusorDataSet {
+  setPeriods(periods: Array<IFuusorDataSetPeriod>): FuusorDataSet {
     this.datasetOptions.periods = periods.map((period: IFuusorDataSetPeriod) => {
-      if ( ! this._validateDate(period.begin || '')) {
+      if (!this._validateDate(period.begin || '')) {
         throw new Error(`Incorrect period.begin format: "${period.begin}", use YYYY-MM-DD`);
       }
 
-      if ( ! this._validateDate(period.end || '')) {
+      if (!this._validateDate(period.end || '')) {
         throw new Error(`Incorrect period.end format: "${period.end}", use YYYY-MM-DD`);
       }
 
       return {
-        begin : period.begin,
-        end : period.end
-      }
+        begin: period.begin,
+        end: period.end
+      };
     });
-    
+
     return this;
   }
 
@@ -182,7 +182,7 @@ export class FuusorDataSet {
    * @param items Define items for `dimension` fields (array of `id` and `name` pairs), used as automatic filters in reports
    */
 
-  defineField(fieldType: IFuusorFieldType, id: string, name: string, items?: IFuusorDimensionFieldItem[]) : FuusorDataSet {
+  defineField(fieldType: IFuusorFieldType, id: string, name: string, items?: IFuusorDimensionFieldItem[]): FuusorDataSet {
     switch (fieldType) {
       case 'dimension':
         this.defineDimensionField(id, name, items || []);
@@ -213,7 +213,7 @@ export class FuusorDataSet {
 
   /**
    * Define dimension hierarchy
-   * 
+   *
    * @param id hierachy id
    * @param name hierarchy name
    * @param dimensionId dimension id, should be reference to added dimension field
@@ -225,7 +225,7 @@ export class FuusorDataSet {
         this.datasetData.dimensionHierarchies.push({
           id,
           name,
-          dimensionid : dimensionId,
+          dimensionid: dimensionId,
           items: []
         });
 
@@ -239,10 +239,10 @@ export class FuusorDataSet {
   pushDimensionHierarchyItem(hierarchyId: string, item: IFuusorDimensionHierarchyItem) {
     for (const hierarchy of this.datasetData.dimensionHierarchies) {
       if (hierarchy.id === hierarchyId) {
-        if ( ! item.id || ! item.name) {
+        if (!item.id || !item.name) {
           throw new Error(`Missing required properties for dimension hierarchy item (id: ${item.id}, name: ${item.name})`);
         }
-            
+
         hierarchy.items.push(item);
 
         return;
@@ -255,21 +255,21 @@ export class FuusorDataSet {
   /**
    * Add dimension to predefined dimension field
    * @param id Dimension field identifier
-   * @param item Dimension field item with `id` and `name` 
+   * @param item Dimension field item with `id` and `name`
    */
 
   pushDimensionFieldDimension(dimensionId: string, item: IFuusorDimensionFieldItem) {
-    if ( ! item.id || ! item.name) {
+    if (!item.id || !item.name) {
       throw new Error(`Missing required properties for dimension item (id: ${item.id}, name: ${item.name})`);
     }
-    
+
     for (const dimension of this.datasetData.dimensionFields) {
       if (dimension.id === dimensionId) {
         dimension.items.push({
-          id : item.id,
-          name : item.name
+          id: item.id,
+          name: item.name
         });
-        
+
         return;
       }
     }
@@ -278,7 +278,7 @@ export class FuusorDataSet {
   }
 
   /**
-   * Defines date field 
+   * Defines date field
    */
 
   defineDateField(id: string, name: string) {
@@ -286,7 +286,7 @@ export class FuusorDataSet {
   }
 
   /**
-   * Defines value field 
+   * Defines value field
    */
 
   defineValueField(id: string, name: string) {
@@ -294,7 +294,7 @@ export class FuusorDataSet {
   }
 
   /**
-   * Defines description field 
+   * Defines description field
    */
 
   defineDescriptionField(id: string, name: string) {
@@ -306,12 +306,12 @@ export class FuusorDataSet {
    */
 
   addRow(row: IFuusorDataSetRow) {
-    const newRow : any = {};
+    const newRow: any = {};
 
     for (const property in row) {
       if (row.hasOwnProperty(property)) {
         const value = row[property];
-       
+
         if (typeof value !== 'string' && typeof value !== 'number' && value !== null) {
           throw new Error(`Incorrect row value for ${property}: ${value}`);
         }
@@ -333,19 +333,17 @@ export class FuusorDataSet {
     }
   }
 
-  validate() : void {
+  validate(): void {
     const valueFields = this.datasetData.valueFields.map((field: IFuusorValueField) => field.id);
     const dateFields = this.datasetData.dateFields.map((field: IFuusorDateField) => field.id);
 
     // If updateByIdField is defined
     if (this.datasetOptions.updateById) {
-
       // If updateByIdField is not included in dimensionFields
       const dimensionFieldNames = this.datasetData.dimensionFields.map((field) => field.id);
-      if ( ! dimensionFieldNames.includes(this.datasetOptions.updateById)) {
+      if (!dimensionFieldNames.includes(this.datasetOptions.updateById)) {
         throw new Error(`dataset.dimensionFields does not contain updateById defined field`);
       }
-
     }
 
     for (const row of this.datasetData.rows) {
@@ -366,7 +364,7 @@ export class FuusorDataSet {
           }
         }
 
-        if ( this.datasetOptions.updateById && !row[this.datasetOptions.updateById]) {
+        if (this.datasetOptions.updateById && !row[this.datasetOptions.updateById]) {
           throw new Error(`Missing updateById field for row`);
         }
       }
@@ -377,10 +375,10 @@ export class FuusorDataSet {
    * Save data set to Fuusor
    */
 
-  async save() : Promise<void> {
+  async save(): Promise<void> {
     this.validate();
 
-    const accessToken = await this.fuusorApiClient.fetchAccessTokenForDataSetUpload();  
+    const accessToken = await this.fuusorApiClient.fetchAccessTokenForDataSetUpload();
 
     await this.fuusorApiClient.saveDataSet(accessToken, { ...this.datasetOptions, ...this.datasetData });
   }
