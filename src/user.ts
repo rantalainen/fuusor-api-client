@@ -35,7 +35,7 @@ export class FuusorUser {
   }
 
   /** Creates a new user account. */
-  async create(user: IUser): Promise<void> {
+  async create(user: IUser): Promise<string> {
     if (!user.userName) {
       throw new Error('Missing user.userName');
     }
@@ -50,8 +50,12 @@ export class FuusorUser {
     if (!['fi-FI', 'en-US'].includes(user.language)) {
       throw new Error('Invalid user.language');
     }
-
-    await this.request('POST', 'Create', user);
+    if (user.authenticationType == 'activationlink') {
+      return await this.request('POST', 'Create', user);
+    } else {
+      await this.request('POST', 'Create', user);
+      return '';
+    }
   }
 
   /** Deletes user account. */

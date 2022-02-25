@@ -350,13 +350,23 @@ Creates a new user account.
 
 **optional**:
 
-- `user.authenticationType` Authentication type. Valid values: `microsoft`, `google`. Default is `microsoft`.
+- `user.authenticationType` Authentication type. Valid values: `microsoft`, `google`, `activationlink`. Default is `microsoft`.
 - `user.language` Default UI language for user. Valid values: `fi-FI`, `en-US`. Default is `fi-FI`.
 
 ```javascript
 await fuusorApiClient.users.create({
   userName: 'user@example.com',
   authenticationType: 'microsoft',
+  language: 'fi-FI'
+});
+```
+
+If `activationlink` is used as an authentication type, the request will respond with the activation code (as a string) that is used to activate the account.
+
+```js
+const activationCode = await fuusorApiClient.users.create({
+  userName: 'user@example.com',
+  authenticationType: 'activationlink',
   language: 'fi-FI'
 });
 ```
