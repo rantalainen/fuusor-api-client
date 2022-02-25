@@ -4,13 +4,13 @@ import { Method } from 'got';
 export interface IUser {
   /** Email used for login. */
   userName: string;
-  /** Authentication type. Valid values: `microsoft`, `google`, `activationlink`. Default is `microsoft`. */
+  /** Authentication type. Valid values: `microsoft`, `google`. Default is `microsoft`. */
   authenticationType?: IUserAuthenticationType;
   /** Default UI language for user. Valid values: `fi-FI`, `en-US`. Default is `fi-FI`. */
   language?: IUserLanguage;
 }
 
-export type IUserAuthenticationType = 'microsoft' | 'google' | 'activationlink';
+export type IUserAuthenticationType = 'microsoft' | 'google';
 export type IUserLanguage = 'fi-FI' | 'en-US';
 
 export class FuusorUser {
@@ -35,7 +35,7 @@ export class FuusorUser {
   }
 
   /** Creates a new user account. */
-  async create(user: IUser): Promise<string> {
+  async create(user: IUser): Promise<void> {
     if (!user.userName) {
       throw new Error('Missing user.userName');
     }
@@ -43,19 +43,15 @@ export class FuusorUser {
       throw new Error(`Invalid userName ${user.userName}`);
     }
     user.authenticationType = user.authenticationType || 'microsoft';
-    if (!['microsoft', 'google', 'activationlink'].includes(user.authenticationType)) {
+    if (!['microsoft', 'google'].includes(user.authenticationType)) {
       throw new Error('Invalid user.authenticationType');
     }
     user.language = user.language || 'fi-FI';
     if (!['fi-FI', 'en-US'].includes(user.language)) {
       throw new Error('Invalid user.language');
     }
-    if (user.authenticationType == 'activationlink') {
-      return await this.request('POST', 'Create', user);
-    } else {
-      await this.request('POST', 'Create', user);
-      return '';
-    }
+
+    await this.request('POST', 'Create', user);
   }
 
   /** Deletes user account. */
