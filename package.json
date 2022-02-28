@@ -1,6 +1,6 @@
 {
   "name": "@rantalainen/fuusor-api-client",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Fuusor API client library",
   "main": "dist/index.js",
   "scripts": {

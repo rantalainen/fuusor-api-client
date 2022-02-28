@@ -8,6 +8,8 @@ export interface IUser {
   authenticationType?: IUserAuthenticationType;
   /** Default UI language for user. Valid values: `fi-FI`, `en-US`. Default is `fi-FI`. */
   language?: IUserLanguage;
+  /** Optional expiration date for account. Example '2022-02-28' */
+  validUntil?: string;
 }
 
 export type IUserAuthenticationType = 'microsoft' | 'google' | 'activationlink';
