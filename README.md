@@ -335,7 +335,8 @@ Example response
   {
     userName: 'user@example.com',
     authenticationType: null,
-    language: 'fi-FI'
+    language: 'fi-FI',
+    validUntil: '2022-02-28'
   }
 ]
 ```
@@ -352,12 +353,14 @@ Creates a new user account.
 
 - `user.authenticationType` Authentication type. Valid values: `microsoft`, `google`, `activationlink`. Default is `microsoft`.
 - `user.language` Default UI language for user. Valid values: `fi-FI`, `en-US`. Default is `fi-FI`.
+- `user.validUntil` Optional expiration date for account.
 
 ```javascript
 await fuusorApiClient.users.create({
   userName: 'user@example.com',
   authenticationType: 'microsoft',
-  language: 'fi-FI'
+  language: 'fi-FI',
+  validUntil: '2022-02-28'
 });
 ```
 
@@ -439,3 +442,5 @@ await fuusorApiClient.userGroups.removeUsers('3fa85f64-5717-4562-b3fc-2c963f66af
 - 1.0.0 Add timeout option
 - 1.0.1 Scope @rantalainen/fuusor-api-client
 - 1.1.0 Add support for User and User Group API endpoints
+- 1.1.1 Add support for new authentication type when creating new users
+- 1.1.2 Add support for user expiration date
