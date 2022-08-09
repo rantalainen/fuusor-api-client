@@ -240,7 +240,7 @@ export class FuusorDataSet {
     for (const hierarchy of this.datasetData.dimensionHierarchies) {
       if (hierarchy.id === hierarchyId) {
         if (!item.id || !item.name) {
-          throw new Error(`Missing required properties for dimension hierarchy item (id: ${item.id}, name: ${item.name})`);
+          throw new Error(`Missing required properties for dimension hierarchy (${hierarchyId}) item (id: ${item.id}, name: ${item.name})`);
         }
 
         hierarchy.items.push(item);
@@ -260,7 +260,7 @@ export class FuusorDataSet {
 
   pushDimensionFieldDimension(dimensionId: string, item: IFuusorDimensionFieldItem) {
     if (!item.id || !item.name) {
-      throw new Error(`Missing required properties for dimension item (id: ${item.id}, name: ${item.name})`);
+      throw new Error(`Missing required properties for dimension (${dimensionId}) item (item.id: ${item.id}, item.name: ${item.name})`);
     }
 
     for (const dimension of this.datasetData.dimensionFields) {
