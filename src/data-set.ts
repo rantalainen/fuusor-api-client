@@ -256,10 +256,11 @@ export class FuusorDataSet {
    * Add dimension to predefined dimension field
    * @param id Dimension field identifier
    * @param item Dimension field item with `id` and `name`
+   * @param options.allowEmptyDimension Set to true if empty dimensions (such as null or undefined) should be allowed (default `false`)
    */
 
-  pushDimensionFieldDimension(dimensionId: string, item: IFuusorDimensionFieldItem) {
-    if (!item.id || !item.name) {
+  pushDimensionFieldDimension(dimensionId: string, item: IFuusorDimensionFieldItem, options?: { allowEmptyDimension?: boolean }) {
+    if ((!item.id || !item.name) && !options?.allowEmptyDimension) {
       throw new Error(`Missing required properties for dimension (${dimensionId}) item (item.id: ${item.id}, item.name: ${item.name})`);
     }
 

@@ -153,7 +153,7 @@ dataSet.defineDescriptionField('work_description', 'Project work description');
 ### dataSet.pushDimensionFieldDimension: Add dimension item to dimension field
 
 ```javascript
-dataSet.pushDimensionFieldDimension(dimensionId, item);
+dataSet.pushDimensionFieldDimension(dimensionId, item, options?);
 ```
 
 Add dimension items to earlier defined dimension field by dimension id.
@@ -165,6 +165,16 @@ dataSet.pushDimensionFieldDimension('costcenter', {
   id: 'SK125',
   name: 'Accounting'
 });
+
+// Option to allow empty dimensions when programmatically adding new dimensions to dataset
+dataSet.pushDimensionFieldDimension(
+  'customer',
+  {
+    id: null, // unknown in dataset row
+    name: null // unknown in dataset row
+  },
+  { allowEmptyDimension: true }
+);
 ```
 
 ### dataSet.defineDimensionHierarchy: Define dataset dimension hierarchies
@@ -445,3 +455,4 @@ await fuusorApiClient.userGroups.removeUsers('3fa85f64-5717-4562-b3fc-2c963f66af
 - 1.1.1 Add support for new authentication type when creating new users
 - 1.1.2 Add support for user expiration date
 - 1.1.3 Better logging in case of invalid hierarchy items or dimension items
+- 1.2.0 pushDimensionFieldDimension option to allow empty dimensions
