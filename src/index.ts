@@ -2,6 +2,9 @@ import got, { Headers, Method, OptionsOfJSONResponseBody } from 'got';
 import { FuusorDataSet, IFuusorDataSetOptions } from './data-set';
 import { FuusorUser } from './user';
 import { FuusorUserGroup } from './user-group';
+import { HttpsAgent } from 'agentkeepalive';
+
+const httpsAgent = new HttpsAgent();
 
 export interface IFuusorApiClientOptions {
   clientId: string;
@@ -30,6 +33,9 @@ export class FuusorApiClient {
 
   /** @private */
   accessTokensTimeout: any;
+
+  /** @private */
+  httpsAgent: HttpsAgent = httpsAgent;
 
   constructor(options: IFuusorApiClientOptions) {
     // Set default connect URI
@@ -106,6 +112,10 @@ export class FuusorApiClient {
 
       headers: {
         Authorization: `Bearer ${accessToken}`
+      },
+
+      agent: {
+        https: this.httpsAgent
       }
     });
 
@@ -113,7 +123,7 @@ export class FuusorApiClient {
   }
 
   async fetchAccessTokenForDataSetUpload(): Promise<string> {
-    const { access_token } = await got
+    const { access_token } = (await got
       .post(this.options.uriConnect || '', {
         form: {
           scope: 'fileupload',
@@ -123,9 +133,13 @@ export class FuusorApiClient {
           username: this.options.username,
           password: this.options.password,
           filetype: 'JsonTransformer'
+        },
+
+        agent: {
+          https: this.httpsAgent
         }
       })
-      .json();
+      .json()) as any;
 
     return access_token;
   }
@@ -149,6 +163,10 @@ export class FuusorApiClient {
             username: this.options.username,
             password: this.options.password,
             filetype: 'JsonTransformer'
+          },
+
+          agent: {
+            https: this.httpsAgent
           }
         })
         .json();
@@ -177,7 +195,11 @@ export class FuusorApiClient {
       timeout: this.options.timeout,
       headers: await this.getDefaultHttpHeaders(scope),
       responseType: 'json',
-      throwHttpErrors: false
+      throwHttpErrors: false,
+
+      agent: {
+        https: this.httpsAgent
+      }
     };
 
     // If json body is defined

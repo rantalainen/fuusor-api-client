@@ -456,3 +456,4 @@ await fuusorApiClient.userGroups.removeUsers('3fa85f64-5717-4562-b3fc-2c963f66af
 - 1.1.2 Add support for user expiration date
 - 1.1.3 Better logging in case of invalid hierarchy items or dimension items
 - 1.2.0 pushDimensionFieldDimension option to allow empty dimensions
+- 2.0.0 Add internal httpsAgent (from agentkeepalive package) by default
