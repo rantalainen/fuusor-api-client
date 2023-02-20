@@ -38,8 +38,14 @@ const fuusorApiClient = new FuusorApiClient({
   password: 'environment-password-from-fuusor',
 
   // Optional: change timeout
-  timeout: 60000
-}
+  timeout: 60000,
+
+  // Optional: keep alive agent
+  keepAliveAgent: true,
+
+  // Optional: DNS cache
+  dnsCache: true,
+})
 ```
 
 ### Changing timeout on the fly
@@ -457,3 +463,4 @@ await fuusorApiClient.userGroups.removeUsers('3fa85f64-5717-4562-b3fc-2c963f66af
 - 1.1.3 Better logging in case of invalid hierarchy items or dimension items
 - 1.2.0 pushDimensionFieldDimension option to allow empty dimensions
 - 2.0.0 Add internal httpsAgent (from agentkeepalive package) by default
+- 3.0.0 Added DNS cahcing support and updated httpsAgent to support options
