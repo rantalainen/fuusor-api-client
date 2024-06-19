@@ -1,9 +1,12 @@
-import got, { Headers, Method, OptionsOfJSONResponseBody } from 'got';
+import got, { Got, Headers, Method, OptionsOfJSONResponseBody } from 'got';
 import { FuusorDataSet, IFuusorDataSetOptions } from './data-set';
 import { FuusorUser } from './user';
 import { FuusorUserGroup } from './user-group';
 import { HttpsAgent } from 'agentkeepalive';
+import * as https from 'https';
+import CacheableLookup from 'cacheable-lookup';
 
+// Create global https agent
 const httpsAgent = new HttpsAgent();
 
 export interface IFuusorApiClientOptions {
@@ -20,10 +23,19 @@ export interface IFuusorApiClientOptions {
 
   /** Request timeout, defaults to 120000 (120 secs) */
   timeout?: number;
+
+  /** Instance of `https.Agent` or `true` to enable internal Keep Alive Agent, defaults to `true` */
+  keepAliveAgent?: boolean | https.Agent;
+
+  /** Instance of `cacheable-lookup` or `true` to enable internal DNS cache, defaults to `true` */
+  dnsCache?: boolean | CacheableLookup;
 }
 
 export class FuusorApiClient {
   options: IFuusorApiClientOptions;
+
+  /** Got instance to be used when making requests */
+  gotInstance: Got;
 
   readonly users: FuusorUser;
   readonly userGroups: FuusorUserGroup;
@@ -34,36 +46,42 @@ export class FuusorApiClient {
   /** @private */
   accessTokensTimeout: any;
 
-  /** @private */
-  httpsAgent: HttpsAgent = httpsAgent;
-
   constructor(options: IFuusorApiClientOptions) {
-    // Set default connect URI
-    options.uriConnect = options.uriConnect || 'https://api.fuusor.fi/connect/token';
-    options.uriBase = options.uriBase || 'https://api.fuusor.fi/api/v1';
-    options.uriUploadFile = options.uriUploadFile || `${options.uriBase}/uploadfile`;
-    options.uriDataset = options.uriDataset || `${options.uriBase}/dataset`;
+    this.options = options || {};
 
-    // Set default timeout
-    options.timeout = options.timeout || 120000;
+    // Check that needed options are included
+    if (!this.options.clientId) throw new Error('Missing options.clientId');
+    if (!this.options.clientSecret) throw new Error('Missing options.clientSecret');
+    if (!this.options.username) throw new Error('Missing options.username');
+    if (!this.options.password) throw new Error('Missing options.password');
 
-    if (!options.clientId) {
-      throw new Error('Missing options.clientId');
+    // Set default connect URIs if none was provided
+    if (!this.options.uriConnect) this.options.uriConnect = 'https://api.fuusor.fi/connect/token';
+    if (!this.options.uriBase) this.options.uriBase = 'https://api.fuusor.fi/api/v1';
+    if (!this.options.uriUploadFile) this.options.uriUploadFile = `${this.options.uriBase}/uploadfile`;
+    if (!this.options.uriDataset) this.options.uriDataset = `${this.options.uriBase}/dataset`;
+
+    // Set default timeout if none was provided
+    if (!this.options.timeout) this.options.timeout = 120000;
+
+    // Use internal keepAliveAgent by default
+    if (this.options.keepAliveAgent === true || this.options.keepAliveAgent === undefined) {
+      this.options.keepAliveAgent = httpsAgent;
     }
 
-    if (!options.clientSecret) {
-      throw new Error('Missing options.clientSecret');
+    // Use internal dnsCache by default (falls back to got's dnsCache)
+    if (this.options.dnsCache === true || this.options.dnsCache === undefined) {
+      this.options.dnsCache = true;
     }
 
-    if (!options.username) {
-      throw new Error('Missing options.username');
-    }
+    // Set gotInstance defaults, can also include other options
+    this.gotInstance = got.extend({
+      // Agent options
+      agent: { https: this.options.keepAliveAgent || undefined },
 
-    if (!options.password) {
-      throw new Error('Missing options.password');
-    }
-
-    this.options = options;
+      // DNS caching options
+      dnsCache: this.options.dnsCache || undefined
+    });
 
     this.users = new FuusorUser(this);
     this.userGroups = new FuusorUserGroup(this);
@@ -105,17 +123,11 @@ export class FuusorApiClient {
   async saveDataSet(accessToken: string, data: any): Promise<void> {
     const json = this._minimizeObjectKeys(data);
 
-    await got.post(this.options.uriDataset || '', {
+    await this.gotInstance.post(this.options.uriDataset || '', {
       json,
-
       timeout: this.options.timeout,
-
       headers: {
         Authorization: `Bearer ${accessToken}`
-      },
-
-      agent: {
-        https: this.httpsAgent
       }
     });
 
@@ -123,7 +135,7 @@ export class FuusorApiClient {
   }
 
   async fetchAccessTokenForDataSetUpload(): Promise<string> {
-    const { access_token } = (await got
+    const { access_token } = (await this.gotInstance
       .post(this.options.uriConnect || '', {
         form: {
           scope: 'fileupload',
@@ -133,10 +145,6 @@ export class FuusorApiClient {
           username: this.options.username,
           password: this.options.password,
           filetype: 'JsonTransformer'
-        },
-
-        agent: {
-          https: this.httpsAgent
         }
       })
       .json()) as any;
@@ -153,7 +161,7 @@ export class FuusorApiClient {
   async refreshAccessToken(scope: string): Promise<void> {
     // Check if access token is expired
     if (!this.accessTokens?.[scope]) {
-      const response: any = await got
+      const response: any = await this.gotInstance
         .post(this.options.uriConnect || '', {
           form: {
             scope,
@@ -163,10 +171,6 @@ export class FuusorApiClient {
             username: this.options.username,
             password: this.options.password,
             filetype: 'JsonTransformer'
-          },
-
-          agent: {
-            https: this.httpsAgent
           }
         })
         .json();
@@ -195,11 +199,7 @@ export class FuusorApiClient {
       timeout: this.options.timeout,
       headers: await this.getDefaultHttpHeaders(scope),
       responseType: 'json',
-      throwHttpErrors: false,
-
-      agent: {
-        https: this.httpsAgent
-      }
+      throwHttpErrors: false
     };
 
     // If json body is defined
@@ -212,7 +212,7 @@ export class FuusorApiClient {
       gotOptions.searchParams = params;
     }
 
-    const response = await got({ ...gotOptions });
+    const response = await this.gotInstance({ ...gotOptions });
 
     if (response.statusCode !== 200) {
       throw new Error(`Fuusor HTTP error ${response.statusCode} (${response.statusMessage}): ${response.body}`);
