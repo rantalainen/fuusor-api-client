@@ -11,6 +11,7 @@ export interface IFuusorDataSetOptions {
   primaryDate?: string;
   periods?: IFuusorDataSetPeriod[];
   updateById?: string;
+  updateWebhookUrl?: string;
 }
 
 export interface IFuusorDimensionFieldItem {
