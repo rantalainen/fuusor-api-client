@@ -2,7 +2,9 @@
 
 Third party Fuusor API client. Fuusor website: https://www.fuusor.fi/
 
-:warning: This tool is in early stages and is subject to change.
+:warning: This tool is in early stages and is subject to change. 
+
+:warning: This tool does not have the latest functionality defined in [Fuusor API documentation](https://api.fuusor.fi/swagger/index.html).
 
 ## Installation
 
