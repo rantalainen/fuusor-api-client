@@ -1,5 +1,29 @@
 import { FuusorApiClient } from '.';
 
+export interface IFuusorDataSetResponse {
+  Datasetid: string;
+  DatasetName: string;
+  DatasetType: string;
+  Periods: {
+    Begin: string;
+    End: string;
+  }[];
+  DimensionFields: {
+    Id: string;
+    Name: string;
+    Items: any[];
+  }[];
+  DateFields: IFuusorDataSetResponseItem[];
+  ValueFields: IFuusorDataSetResponseItem[];
+  DescriptionFields: IFuusorDataSetResponseItem[];
+  Rows: any[];
+}
+
+export interface IFuusorDataSetResponseItem {
+  Id: string | number;
+  Name: string;
+}
+
 export interface IFuusorDataSetOptions {
   groupId: string;
   datasetId: string;

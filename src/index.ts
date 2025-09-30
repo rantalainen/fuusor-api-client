@@ -1,5 +1,5 @@
 import got, { Got, Headers, Method, OptionsOfJSONResponseBody } from 'got';
-import { FuusorDataSet, IFuusorDataSetOptions } from './data-set';
+import { FuusorDataSet, IFuusorDataSetOptions, IFuusorDataSetResponse } from './data-set';
 import { FuusorUser } from './user';
 import { FuusorUserGroup } from './user-group';
 import { HttpsAgent } from 'agentkeepalive';
@@ -160,7 +160,11 @@ export class FuusorApiClient {
    * @param includeHierarchies - Whether to include hierarchies in the response
    * @param includeConnectedDataSets - Whether to include connected datasets in the response
    */
-  async getDataSet(dataSetId: string, includeHierarchies: boolean = false, includeConnectedDataSets: boolean = false): Promise<any> {
+  async getDataSet(
+    dataSetId: string,
+    includeHierarchies: boolean = false,
+    includeConnectedDataSets: boolean = false
+  ): Promise<IFuusorDataSetResponse[]> {
     const params = {
       DatasetId: dataSetId,
       IncludeHierarchies: includeHierarchies,
