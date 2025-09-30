@@ -152,6 +152,24 @@ export class FuusorApiClient {
     return access_token;
   }
 
+  /**
+   * Get DataSet from Fuusor.
+   *
+   * Note that with included hierarchies and connected datasets the response can be quite large. This function can't handle very large responses, so if you need those, consider using direct API calls with your own HTTP client.
+   * @param dataSetId - The ID of the dataset to retrieve
+   * @param includeHierarchies - Whether to include hierarchies in the response
+   * @param includeConnectedDataSets - Whether to include connected datasets in the response
+   */
+  async getDataSet(dataSetId: string, includeHierarchies: boolean = false, includeConnectedDataSets: boolean = false): Promise<any> {
+    const params = {
+      DatasetId: dataSetId,
+      IncludeHierarchies: includeHierarchies,
+      IncludeConnectedDataSets: includeConnectedDataSets
+    };
+
+    return await this.request('datasets', 'DataSet/Get/', 'GET', undefined, params);
+  }
+
   /** @private */
   resetAccessToken(scope: string) {
     this.accessTokens[scope] = undefined;
